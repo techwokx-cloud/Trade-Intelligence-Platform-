@@ -1,0 +1,50 @@
+# BantuMarket Multi-Agent System Dependencies
+
+# IBM watsonx Integration
+ibm-watsonx-ai>=0.2.0
+ibm-watson>=7.0.0
+
+# AI/ML Libraries
+langchain>=0.1.0
+langchain-ibm>=0.1.0
+
+# Web Scraping & Data Tools
+requests>=2.31.0
+beautifulsoup4>=4.12.0
+selenium>=4.15.0
+
+# Data Processing
+pandas>=2.1.0
+numpy>=1.24.0
+
+# Dashboard & Visualization
+streamlit>=1.28.0
+plotly>=5.17.0
+altair>=5.1.0
+
+# API & Networking
+fastapi>=0.104.0
+uvicorn>=0.24.0
+httpx>=0.25.0
+
+# Security & Cryptography
+cryptography>=41.0.0
+pyjwt>=2.8.0
+
+# Configuration Management
+python-dotenv>=1.0.0
+pydantic>=2.4.0
+pydantic-settings>=2.0.0
+
+# Logging & Monitoring
+loguru>=0.7.0
+prometheus-client>=0.18.0
+
+# Testing
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+pytest-cov>=4.1.0
+
+# Utilities
+python-dateutil>=2.8.0
+pytz>=2023.3
