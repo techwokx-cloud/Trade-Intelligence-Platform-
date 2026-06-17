@@ -193,7 +193,23 @@ st.markdown("""
     }
     
     .stFileUploader small {
-        color: #b0b0b0 !important;
+        color: #e0e0e0 !important;
+    }
+    
+    .stFileUploader [data-testid="stFileUploaderDropzoneInstructions"] {
+        color: #e0e0e0 !important;
+    }
+    
+    .stFileUploader [data-testid="stFileUploaderDropzoneInstructions"] small {
+        color: #e0e0e0 !important;
+    }
+    
+    .stFileUploader div {
+        color: #e0e0e0 !important;
+    }
+    
+    .stFileUploader span {
+        color: #e0e0e0 !important;
     }
     
     /* Button Help Text */
