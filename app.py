@@ -363,45 +363,41 @@ def render_about_section():
     col1, col2 = st.columns([2, 1])
     
     with col1:
+        st.markdown('<div class="about-card">', unsafe_allow_html=True)
+        st.markdown('<div class="about-title">Trade Intelligence Platform v2.0.0</div>', unsafe_allow_html=True)
+        st.markdown('<div class="about-text">', unsafe_allow_html=True)
+        
+        st.write("**AI-powered multi-agent system** for cross-border trade compliance, risk analysis, and executive decision support.")
+        
+        st.write("**Supported Trade Frameworks:**")
         st.markdown("""
-        <div class="about-card">
-            <div class="about-title">Trade Intelligence Platform v2.0.0</div>
-            <div class="about-text">
-                <p>AI-powered multi-agent system for cross-border trade compliance, risk analysis, and executive decision support.</p>
-                
-                <p><strong>Supported Trade Frameworks:</strong></p>
-                <ul>
-                    <li>AfCFTA (African Continental Free Trade Area)</li>
-                    <li>WTO (World Trade Organization)</li>
-                    <li>USMCA (United States-Mexico-Canada Agreement)</li>
-                    <li>EU Customs Union</li>
-                    <li>ASEAN (Association of Southeast Asian Nations)</li>
-                    <li>GCC (Gulf Cooperation Council)</li>
-                </ul>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
+        - **AfCFTA** (African Continental Free Trade Area)
+        - **WTO** (World Trade Organization)
+        - **USMCA** (United States-Mexico-Canada Agreement)
+        - **EU** Customs Union
+        - **ASEAN** (Association of Southeast Asian Nations)
+        - **GCC** (Gulf Cooperation Council)
+        """)
+        
+        st.markdown('</div></div>', unsafe_allow_html=True)
     
     with col2:
+        st.markdown('<div class="about-card">', unsafe_allow_html=True)
+        st.markdown('<div class="about-title">Technology Stack</div>', unsafe_allow_html=True)
+        st.markdown('<div class="about-text">', unsafe_allow_html=True)
+        
+        st.write("**Powered by:**")
         st.markdown("""
-        <div class="about-card">
-            <div class="about-title">Technology Stack</div>
-            <div class="about-text">
-                <p><strong>Powered by:</strong></p>
-                <ul>
-                    <li>🤖 IBM watsonx.ai</li>
-                    <li>💎 IBM Granite Models</li>
-                    <li>🐍 IBM Watson Python SDK</li>
-                    <li>📊 Bright Data API</li>
-                    <li>⚡ Streamlit Framework</li>
-                </ul>
-                <br/>
-                <p style="text-align: center; color: #ff6b00; font-weight: 600;">
-                    Built for IBM AI Builders Challenge
-                </p>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
+        - 🤖 **IBM watsonx.ai**
+        - 💎 **IBM Granite Models**
+        - 🐍 **IBM Watson Python SDK**
+        - 📊 **Bright Data API**
+        - ⚡ **Streamlit Framework**
+        """)
+        
+        st.markdown('<p style="text-align: center; color: #ff6b00; font-weight: 600; margin-top: 1rem;">Built for IBM AI Builders Challenge</p>', unsafe_allow_html=True)
+        
+        st.markdown('</div></div>', unsafe_allow_html=True)
 
 
 def render_key_metrics(data: Dict[str, Any]):
