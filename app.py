@@ -129,6 +129,93 @@ st.markdown("""
         color: #e0e0e0 !important;
     }
     
+    /* Tooltips and Help Text */
+    .stTooltipIcon {
+        color: #00d4ff !important;
+    }
+    
+    [data-testid="stTooltipHoverTarget"] {
+        color: #e0e0e0 !important;
+    }
+    
+    .stTooltipContent {
+        background-color: #2d2d2d !important;
+        color: #ffffff !important;
+        border: 1px solid #00d4ff;
+    }
+    
+    /* Dropdown and Select Options */
+    .stSelectbox div[data-baseweb="select"] {
+        background-color: #1a1a1a !important;
+    }
+    
+    .stSelectbox div[data-baseweb="select"] > div {
+        background-color: #1a1a1a !important;
+        color: #e0e0e0 !important;
+    }
+    
+    [data-baseweb="popover"] {
+        background-color: #1a1a1a !important;
+    }
+    
+    [role="option"] {
+        background-color: #1a1a1a !important;
+        color: #e0e0e0 !important;
+    }
+    
+    [role="option"]:hover {
+        background-color: #2d2d2d !important;
+        color: #ffffff !important;
+    }
+    
+    [aria-selected="true"] {
+        background-color: #0f62fe !important;
+        color: #ffffff !important;
+    }
+    
+    /* Multi-select */
+    .stMultiSelect div[data-baseweb="select"] {
+        background-color: #1a1a1a !important;
+    }
+    
+    .stMultiSelect span {
+        color: #e0e0e0 !important;
+    }
+    
+    [data-baseweb="tag"] {
+        background-color: #0f62fe !important;
+        color: #ffffff !important;
+    }
+    
+    /* File Uploader Text */
+    .stFileUploader section {
+        color: #e0e0e0 !important;
+    }
+    
+    .stFileUploader small {
+        color: #b0b0b0 !important;
+    }
+    
+    /* Button Help Text */
+    button[title] {
+        color: #ffffff !important;
+    }
+    
+    /* Expander Header */
+    [data-testid="stExpander"] summary {
+        background-color: #1a1a1a !important;
+        color: #e0e0e0 !important;
+    }
+    
+    [data-testid="stExpander"] summary:hover {
+        background-color: #2d2d2d !important;
+    }
+    
+    /* Text in expander */
+    [data-testid="stExpander"] div {
+        color: #e0e0e0 !important;
+    }
+    
     /* Header Styling */
     .bloomberg-header {
         background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
