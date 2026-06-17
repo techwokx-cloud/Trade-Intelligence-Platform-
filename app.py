@@ -543,11 +543,11 @@ def render_document_upload():
             col_header1, col_header2, col_header3 = st.columns([4, 2, 1])
             
             with col_header1:
-                st.markdown(f"**📄 {doc['name']}**")
+                st.markdown(f"<span style='color: #ffffff; font-size: 1.1rem; font-weight: 600;'>📄 {doc['name']}</span>", unsafe_allow_html=True)
             
             with col_header2:
                 size_kb = doc['size'] / 1024
-                st.text(f"📦 {size_kb:.1f} KB")
+                st.markdown(f"<span style='color: #b0b0b0; font-size: 0.95rem;'>📦 {size_kb:.1f} KB</span>", unsafe_allow_html=True)
             
             with col_header3:
                 if st.button("🗑️", key=f"delete_{idx}", help="Delete document"):
