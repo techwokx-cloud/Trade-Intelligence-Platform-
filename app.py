@@ -39,9 +39,94 @@ st.markdown("""
     /* Bloomberg Dark Theme */
     .main {
         background-color: #0a0a0a;
+        color: #e0e0e0;
     }
     .stApp {
         background-color: #0a0a0a;
+        color: #e0e0e0;
+    }
+    
+    /* Global Text Colors */
+    body, p, span, div, label, input, textarea, select {
+        color: #e0e0e0 !important;
+    }
+    
+    /* Streamlit Native Elements */
+    .stMarkdown, .stMarkdown p, .stMarkdown span {
+        color: #e0e0e0 !important;
+    }
+    
+    .stText, .stTextInput label, .stSelectbox label, .stMultiSelect label {
+        color: #e0e0e0 !important;
+    }
+    
+    /* Headers */
+    h1, h2, h3, h4, h5, h6 {
+        color: #ffffff !important;
+    }
+    
+    /* Metric Labels */
+    .stMetric label {
+        color: #b0b0b0 !important;
+    }
+    
+    .stMetric [data-testid="stMetricValue"] {
+        color: #ffffff !important;
+    }
+    
+    .stMetric [data-testid="stMetricDelta"] {
+        color: #00ff88 !important;
+    }
+    
+    /* Buttons */
+    .stButton button {
+        color: #ffffff !important;
+        background-color: #0f62fe;
+        border: none;
+    }
+    
+    .stButton button:hover {
+        background-color: #0353e9;
+    }
+    
+    /* File Uploader */
+    .stFileUploader label {
+        color: #e0e0e0 !important;
+    }
+    
+    /* Expander */
+    .streamlit-expanderHeader {
+        color: #e0e0e0 !important;
+        background-color: #1a1a1a;
+    }
+    
+    .streamlit-expanderContent {
+        background-color: #1a1a1a;
+        color: #e0e0e0 !important;
+    }
+    
+    /* Dataframe */
+    .stDataFrame {
+        color: #e0e0e0 !important;
+    }
+    
+    /* Info/Warning/Error boxes */
+    .stAlert {
+        color: #000000 !important;
+    }
+    
+    /* Sidebar */
+    .css-1d391kg, [data-testid="stSidebar"] {
+        background-color: #0f0f0f;
+        color: #e0e0e0 !important;
+    }
+    
+    [data-testid="stSidebar"] label {
+        color: #e0e0e0 !important;
+    }
+    
+    [data-testid="stSidebar"] .stMarkdown {
+        color: #e0e0e0 !important;
     }
     
     /* Header Styling */
@@ -143,10 +228,19 @@ st.markdown("""
         margin: 0.5rem 0;
     }
     
+    .port-card * {
+        color: #e0e0e0 !important;
+    }
+    
     .port-name {
-        color: #00ff88;
+        color: #00ff88 !important;
         font-weight: 600;
         font-size: 1.1rem;
+    }
+    
+    .port-stat {
+        color: #b0b0b0 !important;
+        font-size: 0.9rem;
     }
     
     /* Ticker Style */
@@ -155,8 +249,15 @@ st.markdown("""
         padding: 0.5rem;
         border-radius: 4px;
         font-family: 'Courier New', monospace;
-        color: #00ff88;
         font-size: 0.9rem;
+    }
+    
+    .ticker strong {
+        color: #ffffff !important;
+    }
+    
+    .ticker * {
+        color: #e0e0e0 !important;
     }
     
     /* Progress Animation */
