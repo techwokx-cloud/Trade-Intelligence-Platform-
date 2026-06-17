@@ -273,7 +273,8 @@ def render_workflow_logs():
             return 'background-color: #fff1d0'
         return ''
     
-    styled_df = log_df.style.applymap(style_log_level, subset=['level'])
+    # Use map (pandas >= 2.1.0 replaced applymap with map)
+    styled_df = log_df.style.map(style_log_level, subset=['level'])
     st.dataframe(styled_df, use_container_width=True, height=200)
 
 
