@@ -449,14 +449,32 @@ def render_live_ticker(data: Dict[str, Any]):
     """Render live commodity ticker"""
     st.markdown("### 📊 Live Market Data")
     
+    # Commodity icons mapping
+    commodity_icons = {
+        "Coffee": "☕",
+        "Cocoa": "🍫",
+        "Gold": "🥇",
+        "Oil": "🛢️",
+        "Cotton": "🧵"
+    }
+    
     cols = st.columns(5)
     for idx, (commodity, info) in enumerate(data["commodity_prices"].items()):
         with cols[idx]:
-            change_color = "#00ff88" if info["change"] >= 0 else "#ff3366"
-            change_symbol = "▲" if info["change"] >= 0 else "▼"
+            # Get commodity icon
+            icon = commodity_icons.get(commodity, "📦")
+            
+            # Determine color based on change direction
+            if info["change"] >= 0:
+                change_color = "#00ff88"  # Green for positive
+                change_symbol = "▲"
+            else:
+                change_color = "#ff3366"  # Red for negative
+                change_symbol = "▼"
+            
             st.markdown(f"""
             <div class="ticker">
-                <strong>{commodity}</strong><br/>
+                <strong>{icon} {commodity}</strong><br/>
                 ${info['price']:.2f}<br/>
                 <span style="color: {change_color};">{change_symbol} {abs(info['change']):.1f}%</span>
             </div>
