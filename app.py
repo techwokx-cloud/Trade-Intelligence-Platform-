@@ -761,6 +761,58 @@ def render_workflow_execution_panel():
     </div>
     """, unsafe_allow_html=True)
     
+    # Add help/info section
+    with st.expander("ℹ️ What is a Workflow? (Click to learn more)", expanded=False):
+        st.markdown("""
+        <div style='color: #e0e0e0; line-height: 1.8;'>
+        
+        ### 📖 Understanding Workflows
+        
+        A **Workflow** is an automated process that analyzes trade documents and transactions using AI agents.
+        Think of it as a digital assistant that checks your trade compliance automatically.
+        
+        ### 🔍 Workflow Components Explained:
+        
+        **1. Workflow ID (e.g., wf-001, wf-002)**
+        - **What it is:** A unique identifier for each analysis task
+        - **Why it matters:** Helps you track and reference specific analyses
+        - **Example:** "wf-001" = Your first workflow execution
+        
+        **2. Trade Framework (e.g., AfCFTA, WTO, USMCA)**
+        - **What it is:** The international trade agreement rules to check against
+        - **Why it matters:** Different regions have different trade rules
+        - **Examples:**
+          - **AfCFTA:** African Continental Free Trade Area rules
+          - **WTO:** World Trade Organization standards
+          - **USMCA:** US-Mexico-Canada trade agreement
+        
+        **3. Execution Mode**
+        - **Sequential:** Checks one thing at a time (slower but thorough)
+        - **Parallel:** Checks multiple things simultaneously (faster)
+        - **Conditional:** Smart checking based on document type
+        
+        **4. Status Indicators**
+        - ⚡ **RUNNING** (Blue): Analysis in progress
+        - ✅ **COMPLETED** (Green): Analysis finished successfully
+        - ❌ **FAILED** (Red): Analysis encountered an error
+        
+        ### 💡 How to Use:
+        1. Select your trade framework
+        2. Choose execution mode
+        3. Pick data source (documents, ports, etc.)
+        4. Click "🚀 Execute Workflow"
+        5. Watch the progress in "Recent Workflows" below
+        
+        ### 📊 What Happens During a Workflow:
+        - AI agents analyze your documents
+        - Compliance rules are checked
+        - Risk assessment is performed
+        - Detailed report is generated
+        - Results appear in 10-15 seconds
+        
+        </div>
+        """, unsafe_allow_html=True)
+    
     col1, col2, col3, col4 = st.columns(4)
     
     with col1:
@@ -804,18 +856,51 @@ def render_workflow_execution_panel():
         if st.button("🔄 Refresh", use_container_width=True):
             st.rerun()
     
-    # Show active workflows
+    # Show active workflows with detailed descriptions
     if st.session_state.workflows:
-        st.markdown("#### 📋 Recent Workflows")
+        st.markdown("#### 📋 Recent Workflow Executions")
+        st.markdown("<p style='color: #b0b0b0; font-size: 0.9rem; margin-bottom: 1rem;'>Track your AI-powered trade compliance analyses below</p>", unsafe_allow_html=True)
+        
         for wf in st.session_state.workflows[:5]:
             status_color = "#00ff88" if wf["status"] == "completed" else "#00d4ff" if wf["status"] == "running" else "#ff3366"
             status_icon = "✅" if wf["status"] == "completed" else "⚡" if wf["status"] == "running" else "❌"
             
+            # Create descriptive status text
+            if wf["status"] == "completed":
+                status_desc = "Analysis Complete"
+            elif wf["status"] == "running":
+                status_desc = "Analyzing..."
+            else:
+                status_desc = "Failed"
+            
+            # Framework descriptions
+            framework_desc = {
+                "AfCFTA": "African Continental Free Trade Area",
+                "WTO": "World Trade Organization",
+                "USMCA": "US-Mexico-Canada Agreement",
+                "EU Customs": "European Union Customs",
+                "ASEAN": "Association of Southeast Asian Nations",
+                "GCC": "Gulf Cooperation Council"
+            }
+            
             st.markdown(f"""
-            <div style="background: #1a1a1a; padding: 0.8rem; border-radius: 4px; margin: 0.3rem 0; border-left: 3px solid {status_color};">
-                <strong>{status_icon} {wf['id']}</strong> | {wf['framework']} | {wf['mode']} | 
-                <span style="color: {status_color};">{wf['status'].upper()}</span> | 
-                {wf['timestamp'].strftime('%H:%M:%S')}
+            <div style="background: linear-gradient(135deg, #1a1a1a 0%, #252525 100%);
+                        padding: 1rem; border-radius: 6px; margin: 0.5rem 0;
+                        border-left: 4px solid {status_color}; color: #e0e0e0;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                    <div style="font-size: 1.1rem; font-weight: 600;">
+                        {status_icon} Workflow {wf['id'].upper()}
+                    </div>
+                    <div style="color: {status_color}; font-weight: 600; font-size: 0.95rem;">
+                        {status_desc}
+                    </div>
+                </div>
+                <div style="color: #b0b0b0; font-size: 0.9rem; line-height: 1.6;">
+                    <strong style="color: #00d4ff;">Framework:</strong> {wf['framework']} ({framework_desc.get(wf['framework'], wf['framework'])})<br/>
+                    <strong style="color: #00d4ff;">Mode:</strong> {wf['mode']} Processing<br/>
+                    <strong style="color: #00d4ff;">Data Source:</strong> {wf['source']}<br/>
+                    <strong style="color: #00d4ff;">Started:</strong> {wf['timestamp'].strftime('%Y-%m-%d %H:%M:%S')} UTC
+                </div>
             </div>
             """, unsafe_allow_html=True)
 
