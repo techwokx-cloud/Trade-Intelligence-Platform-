@@ -308,6 +308,10 @@ def render_document_upload():
         if uploaded_files:
             for file in uploaded_files:
                 if file not in [doc['file'] for doc in st.session_state.uploaded_documents]:
+                    # Simulate document analysis
+                    file_bytes = file.read()
+                    is_blank = len(file_bytes) < 1000  # Simple check for blank/small files
+                    
                     doc_info = {
                         'file': file,
                         'name': file.name,
@@ -317,9 +321,16 @@ def render_document_upload():
                         'status': 'uploaded',
                         'verification_score': None,
                         'verification_stage': None,
-                        'progress': 0
+                        'progress': 0,
+                        'is_blank': is_blank,
+                        'analysis': None,
+                        'issues': [],
+                        'extracted_fields': {}
                     }
                     st.session_state.uploaded_documents.append(doc_info)
+                    
+                    # Reset file pointer
+                    file.seek(0)
             
             st.success(f"✅ {len(uploaded_files)} document(s) uploaded successfully!")
     
@@ -391,7 +402,48 @@ def render_document_upload():
                 if doc['progress'] >= 100:
                     time.sleep(0.5)  # Brief pause before showing result
                     doc['status'] = 'verified'
-                    doc['verification_score'] = np.random.randint(85, 100)
+                    
+                    # Simulate document analysis
+                    if doc['is_blank']:
+                        doc['verification_score'] = np.random.randint(0, 30)
+                        doc['issues'] = [
+                            "❌ Document appears to be blank or incomplete",
+                            "❌ No readable content detected",
+                            "❌ Missing required fields"
+                        ]
+                        doc['extracted_fields'] = {}
+                        doc['analysis'] = "Document is blank or contains insufficient data for verification."
+                    else:
+                        doc['verification_score'] = np.random.randint(75, 100)
+                        # Simulate extracted fields
+                        doc['extracted_fields'] = {
+                            'Document Type': 'Commercial Invoice',
+                            'Invoice Number': f'INV-{np.random.randint(1000, 9999)}',
+                            'Date': datetime.utcnow().strftime('%Y-%m-%d'),
+                            'Exporter': 'ABC Trading Co.',
+                            'Importer': 'XYZ Imports Ltd.',
+                            'Total Value': f'${np.random.randint(10000, 99999):,}',
+                            'Currency': 'USD',
+                            'HS Code': f'{np.random.randint(1000, 9999)}.{np.random.randint(10, 99)}',
+                            'Country of Origin': np.random.choice(['Kenya', 'Ghana', 'Nigeria', 'South Africa'])
+                        }
+                        
+                        # Simulate issues based on score
+                        if doc['verification_score'] < 90:
+                            doc['issues'] = [
+                                "⚠️ HS code classification needs verification",
+                                "⚠️ Certificate of origin not attached",
+                                "ℹ️ Consider adding insurance details"
+                            ]
+                        else:
+                            doc['issues'] = [
+                                "✅ All required fields present",
+                                "✅ Document format compliant",
+                                "✅ Data validation passed"
+                            ]
+                        
+                        doc['analysis'] = f"Document successfully analyzed. {len(doc['extracted_fields'])} fields extracted."
+                    
                     doc['verification_stage'] = 'Completed'
                     st.rerun()
                 else:
@@ -415,7 +467,7 @@ def render_document_upload():
                     status_icon = "❌"
                     status_text = "Needs Review"
                 
-                # Display result
+                # Display result summary
                 col_result1, col_result2 = st.columns([3, 1])
                 
                 with col_result1:
@@ -426,7 +478,7 @@ def render_document_upload():
                             {status_icon} {score}% Compliant - {status_text}
                         </div>
                         <div style='color: #b0b0b0; font-size: 0.85rem; margin-top: 0.3rem;'>
-                            Verified against {st.session_state.user_role or 'Trade'} regulations
+                            {doc['analysis']}
                         </div>
                     </div>
                     """, unsafe_allow_html=True)
@@ -436,9 +488,61 @@ def render_document_upload():
                         doc['status'] = 'uploaded'
                         doc['progress'] = 0
                         doc['verification_score'] = None
+                        doc['analysis'] = None
+                        doc['issues'] = []
+                        doc['extracted_fields'] = {}
                         st.rerun()
+                
+                # Detailed analysis in expander
+                with st.expander("📋 View Detailed Analysis", expanded=False):
+                    if doc['is_blank']:
+                        st.error("⚠️ **Blank Document Detected**")
+                        st.markdown("""
+                        This document appears to be blank or contains insufficient data. Please ensure:
+                        - The document is not empty
+                        - The file is not corrupted
+                        - All required fields are filled
+                        - The document is in a readable format
+                        """)
+                    
+                    # Extracted Fields
+                    if doc['extracted_fields']:
+                        st.markdown("### 📊 Extracted Information")
+                        
+                        col_field1, col_field2 = st.columns(2)
+                        
+                        fields_list = list(doc['extracted_fields'].items())
+                        mid_point = len(fields_list) // 2
+                        
+                        with col_field1:
+                            for key, value in fields_list[:mid_point]:
+                                st.markdown(f"**{key}:** {value}")
+                        
+                        with col_field2:
+                            for key, value in fields_list[mid_point:]:
+                                st.markdown(f"**{key}:** {value}")
+                    
+                    # Issues and Recommendations
+                    if doc['issues']:
+                        st.markdown("### 🔍 Findings & Recommendations")
+                        for issue in doc['issues']:
+                            if "❌" in issue:
+                                st.error(issue)
+                            elif "⚠️" in issue:
+                                st.warning(issue)
+                            elif "ℹ️" in issue:
+                                st.info(issue)
+                            else:
+                                st.success(issue)
+                    
+                    # Compliance Details
+                    st.markdown("### ⚖️ Compliance Check")
+                    st.markdown(f"**Framework:** {st.session_state.user_role or 'General Trade'} Regulations")
+                    st.markdown(f"**Verification Date:** {doc['uploaded_at'].strftime('%Y-%m-%d %H:%M:%S')} UTC")
+                    st.markdown(f"**Document Size:** {doc['size'] / 1024:.1f} KB")
+                    st.markdown(f"**File Type:** {doc['type']}")
             
-            st.markdown("<div style='margin-bottom: 1rem;'></div>", unsafe_allow_html=True)
+            st.markdown("<div style='margin-bottom: 1.5rem;'></div>", unsafe_allow_html=True)
 
 
 def render_workflow_execution_panel():
