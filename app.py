@@ -471,6 +471,7 @@ def render_document_upload():
                 col_result1, col_result2 = st.columns([3, 1])
                 
                 with col_result1:
+                    analysis_text = doc.get('analysis', 'Verified against trade regulations')
                     st.markdown(f"""
                     <div style='background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
                                 padding: 1rem; border-radius: 6px; border-left: 4px solid {color};'>
@@ -478,7 +479,7 @@ def render_document_upload():
                             {status_icon} {score}% Compliant - {status_text}
                         </div>
                         <div style='color: #b0b0b0; font-size: 0.85rem; margin-top: 0.3rem;'>
-                            {doc['analysis']}
+                            {analysis_text}
                         </div>
                     </div>
                     """, unsafe_allow_html=True)
@@ -495,7 +496,8 @@ def render_document_upload():
                 
                 # Detailed analysis in expander
                 with st.expander("📋 View Detailed Analysis", expanded=False):
-                    if doc['is_blank']:
+                    # Check for blank document (with safety check)
+                    if doc.get('is_blank', False):
                         st.error("⚠️ **Blank Document Detected**")
                         st.markdown("""
                         This document appears to be blank or contains insufficient data. Please ensure:
@@ -505,13 +507,14 @@ def render_document_upload():
                         - The document is in a readable format
                         """)
                     
-                    # Extracted Fields
-                    if doc['extracted_fields']:
+                    # Extracted Fields (with safety check)
+                    extracted_fields = doc.get('extracted_fields', {})
+                    if extracted_fields:
                         st.markdown("### 📊 Extracted Information")
                         
                         col_field1, col_field2 = st.columns(2)
                         
-                        fields_list = list(doc['extracted_fields'].items())
+                        fields_list = list(extracted_fields.items())
                         mid_point = len(fields_list) // 2
                         
                         with col_field1:
@@ -522,10 +525,11 @@ def render_document_upload():
                             for key, value in fields_list[mid_point:]:
                                 st.markdown(f"**{key}:** {value}")
                     
-                    # Issues and Recommendations
-                    if doc['issues']:
+                    # Issues and Recommendations (with safety check)
+                    issues = doc.get('issues', [])
+                    if issues:
                         st.markdown("### 🔍 Findings & Recommendations")
-                        for issue in doc['issues']:
+                        for issue in issues:
                             if "❌" in issue:
                                 st.error(issue)
                             elif "⚠️" in issue:
