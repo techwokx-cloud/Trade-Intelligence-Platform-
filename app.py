@@ -314,8 +314,10 @@ def render_document_upload():
                         'size': file.size,
                         'type': file.type,
                         'uploaded_at': datetime.utcnow(),
-                        'status': 'pending',
-                        'verification_score': None
+                        'status': 'uploaded',
+                        'verification_score': None,
+                        'verification_stage': None,
+                        'progress': 0
                     }
                     st.session_state.uploaded_documents.append(doc_info)
             
@@ -338,31 +340,105 @@ def render_document_upload():
         st.markdown("#### 📚 Uploaded Documents")
         
         for idx, doc in enumerate(st.session_state.uploaded_documents):
-            col_doc1, col_doc2, col_doc3, col_doc4 = st.columns([3, 2, 2, 1])
+            # Document header
+            col_header1, col_header2, col_header3 = st.columns([4, 2, 1])
             
-            with col_doc1:
-                st.markdown(f"**{doc['name']}**")
+            with col_header1:
+                st.markdown(f"**📄 {doc['name']}**")
             
-            with col_doc2:
+            with col_header2:
                 size_kb = doc['size'] / 1024
-                st.text(f"{size_kb:.1f} KB")
+                st.text(f"📦 {size_kb:.1f} KB")
             
-            with col_doc3:
-                if doc['status'] == 'pending':
-                    if st.button(f"🔍 Verify", key=f"verify_{idx}"):
-                        # Simulate verification
-                        doc['status'] = 'verified'
-                        doc['verification_score'] = np.random.randint(85, 100)
-                        st.rerun()
-                elif doc['status'] == 'verified':
-                    score = doc['verification_score']
-                    color = "#00ff88" if score >= 90 else "#ffaa00" if score >= 75 else "#ff3366"
-                    st.markdown(f"<span style='color: {color}; font-weight: 600;'>✅ {score}% Compliant</span>", unsafe_allow_html=True)
-            
-            with col_doc4:
-                if st.button("🗑️", key=f"delete_{idx}"):
+            with col_header3:
+                if st.button("🗑️", key=f"delete_{idx}", help="Delete document"):
                     st.session_state.uploaded_documents.pop(idx)
                     st.rerun()
+            
+            # Verification section
+            if doc['status'] == 'uploaded':
+                if st.button(f"🔍 Start Verification", key=f"verify_{idx}", type="primary", use_container_width=True):
+                    doc['status'] = 'verifying'
+                    doc['progress'] = 0
+                    doc['verification_stage'] = 'Initializing...'
+                    st.rerun()
+            
+            elif doc['status'] == 'verifying':
+                # Progressive verification stages
+                stages = [
+                    (20, "📤 Uploading to AI engine..."),
+                    (40, "🔍 Extracting document data..."),
+                    (60, "🎯 Checking compliance rules..."),
+                    (80, "⚖️ Validating against framework..."),
+                    (100, "✅ Generating compliance report...")
+                ]
+                
+                current_progress = doc['progress']
+                
+                # Find current stage
+                for progress, stage_text in stages:
+                    if current_progress < progress:
+                        doc['verification_stage'] = stage_text
+                        doc['progress'] = min(current_progress + 20, progress)
+                        break
+                
+                # Display progress
+                st.markdown(f"<div style='color: #00d4ff; font-size: 0.9rem; margin: 0.5rem 0;'>{doc['verification_stage']}</div>", unsafe_allow_html=True)
+                progress_bar = st.progress(doc['progress'] / 100)
+                st.markdown(f"<div style='text-align: right; color: #b0b0b0; font-size: 0.85rem;'>{doc['progress']}% Complete</div>", unsafe_allow_html=True)
+                
+                # Complete verification
+                if doc['progress'] >= 100:
+                    time.sleep(0.5)  # Brief pause before showing result
+                    doc['status'] = 'verified'
+                    doc['verification_score'] = np.random.randint(85, 100)
+                    doc['verification_stage'] = 'Completed'
+                    st.rerun()
+                else:
+                    time.sleep(0.8)  # Simulate processing time
+                    st.rerun()
+            
+            elif doc['status'] == 'verified':
+                score = doc['verification_score']
+                
+                # Color coding based on score
+                if score >= 90:
+                    color = "#00ff88"
+                    status_icon = "✅"
+                    status_text = "Excellent"
+                elif score >= 75:
+                    color = "#ffaa00"
+                    status_icon = "⚠️"
+                    status_text = "Good"
+                else:
+                    color = "#ff3366"
+                    status_icon = "❌"
+                    status_text = "Needs Review"
+                
+                # Display result
+                col_result1, col_result2 = st.columns([3, 1])
+                
+                with col_result1:
+                    st.markdown(f"""
+                    <div style='background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+                                padding: 1rem; border-radius: 6px; border-left: 4px solid {color};'>
+                        <div style='color: {color}; font-size: 1.2rem; font-weight: 600;'>
+                            {status_icon} {score}% Compliant - {status_text}
+                        </div>
+                        <div style='color: #b0b0b0; font-size: 0.85rem; margin-top: 0.3rem;'>
+                            Verified against {st.session_state.user_role or 'Trade'} regulations
+                        </div>
+                    </div>
+                    """, unsafe_allow_html=True)
+                
+                with col_result2:
+                    if st.button("🔄 Re-verify", key=f"reverify_{idx}"):
+                        doc['status'] = 'uploaded'
+                        doc['progress'] = 0
+                        doc['verification_score'] = None
+                        st.rerun()
+            
+            st.markdown("<div style='margin-bottom: 1rem;'></div>", unsafe_allow_html=True)
 
 
 def render_workflow_execution_panel():
