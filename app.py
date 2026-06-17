@@ -28,6 +28,10 @@ if 'workflow_counter' not in st.session_state:
     st.session_state.workflow_counter = 1
 if 'executing' not in st.session_state:
     st.session_state.executing = False
+if 'user_role' not in st.session_state:
+    st.session_state.user_role = None
+if 'uploaded_documents' not in st.session_state:
+    st.session_state.uploaded_documents = []
 
 # Bloomberg-style Custom CSS
 st.markdown("""
@@ -253,6 +257,112 @@ def render_live_ticker(data: Dict[str, Any]):
                 <span style="color: {change_color};">{change_symbol} {abs(info['change']):.1f}%</span>
             </div>
             """, unsafe_allow_html=True)
+
+
+def render_user_role_selection():
+    """Render user role selection"""
+    st.markdown("### 👤 User Profile")
+    
+    col1, col2 = st.columns([1, 3])
+    
+    with col1:
+        role = st.selectbox(
+            "Select Your Role",
+            ["Importer", "Exporter", "Government Agency", "Customs Broker", "Freight Forwarder"],
+            index=0 if st.session_state.user_role is None else ["Importer", "Exporter", "Government Agency", "Customs Broker", "Freight Forwarder"].index(st.session_state.user_role) if st.session_state.user_role in ["Importer", "Exporter", "Government Agency", "Customs Broker", "Freight Forwarder"] else 0,
+            key="user_role_select"
+        )
+        
+        if role != st.session_state.user_role:
+            st.session_state.user_role = role
+            st.rerun()
+    
+    with col2:
+        role_descriptions = {
+            "Importer": "📥 Verify import documentation, check compliance, calculate duties",
+            "Exporter": "📤 Validate export permits, ensure origin compliance, track shipments",
+            "Government Agency": "🏛️ Monitor trade flows, enforce regulations, audit declarations",
+            "Customs Broker": "🤝 Process customs clearance, file declarations, advise clients",
+            "Freight Forwarder": "🚚 Coordinate logistics, manage documentation, track cargo"
+        }
+        st.info(f"**{role}:** {role_descriptions[role]}")
+
+
+def render_document_upload():
+    """Render document upload section"""
+    st.markdown("### 📄 Document Verification Center")
+    
+    col1, col2 = st.columns([2, 1])
+    
+    with col1:
+        st.markdown("**Upload Trade Documents for AI-Powered Verification**")
+        
+        uploaded_files = st.file_uploader(
+            "Choose files",
+            type=['pdf', 'jpg', 'jpeg', 'png', 'xlsx', 'csv', 'docx'],
+            accept_multiple_files=True,
+            help="Supported: Commercial Invoice, Bill of Lading, Packing List, Certificate of Origin, Import/Export License",
+            label_visibility="collapsed"
+        )
+        
+        if uploaded_files:
+            for file in uploaded_files:
+                if file not in [doc['file'] for doc in st.session_state.uploaded_documents]:
+                    doc_info = {
+                        'file': file,
+                        'name': file.name,
+                        'size': file.size,
+                        'type': file.type,
+                        'uploaded_at': datetime.utcnow(),
+                        'status': 'pending',
+                        'verification_score': None
+                    }
+                    st.session_state.uploaded_documents.append(doc_info)
+            
+            st.success(f"✅ {len(uploaded_files)} document(s) uploaded successfully!")
+    
+    with col2:
+        st.markdown("**Document Types:**")
+        st.markdown("""
+        - 📋 Commercial Invoice
+        - 🚢 Bill of Lading
+        - 📦 Packing List
+        - 🎫 Certificate of Origin
+        - 📜 Import/Export License
+        - 🛃 Customs Declaration
+        """)
+    
+    # Display uploaded documents
+    if st.session_state.uploaded_documents:
+        st.markdown("---")
+        st.markdown("#### 📚 Uploaded Documents")
+        
+        for idx, doc in enumerate(st.session_state.uploaded_documents):
+            col_doc1, col_doc2, col_doc3, col_doc4 = st.columns([3, 2, 2, 1])
+            
+            with col_doc1:
+                st.markdown(f"**{doc['name']}**")
+            
+            with col_doc2:
+                size_kb = doc['size'] / 1024
+                st.text(f"{size_kb:.1f} KB")
+            
+            with col_doc3:
+                if doc['status'] == 'pending':
+                    if st.button(f"🔍 Verify", key=f"verify_{idx}"):
+                        # Simulate verification
+                        doc['status'] = 'verified'
+                        doc['verification_score'] = np.random.randint(85, 100)
+                        st.rerun()
+                elif doc['status'] == 'verified':
+                    score = doc['verification_score']
+                    color = "#00ff88" if score >= 90 else "#ffaa00" if score >= 75 else "#ff3366"
+                    st.markdown(f"<span style='color: {color}; font-weight: 600;'>✅ {score}% Compliant</span>", unsafe_allow_html=True)
+            
+            with col_doc4:
+                if st.button("🗑️", key=f"delete_{idx}"):
+                    st.session_state.uploaded_documents.pop(idx)
+                    st.rerun()
 
 
 def render_workflow_execution_panel():
@@ -642,6 +752,16 @@ def main():
     
     # Live ticker
     render_live_ticker(data)
+    
+    st.markdown("---")
+    
+    # User Role Selection
+    render_user_role_selection()
+    
+    st.markdown("---")
+    
+    # Document Upload Section
+    render_document_upload()
     
     st.markdown("---")
     
