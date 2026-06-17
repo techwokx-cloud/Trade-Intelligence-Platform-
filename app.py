@@ -492,13 +492,11 @@ def render_trade_volume_chart(data: Dict[str, Any]):
         height=400,
         hovermode='x unified',
         yaxis=dict(
-            title='Container Volume (TEUs)',
-            titlefont=dict(color='#00ff88'),
+            title=dict(text='Container Volume (TEUs)', font=dict(color='#00ff88')),
             tickfont=dict(color='#00ff88')
         ),
         yaxis2=dict(
-            title='Trade Value (USD)',
-            titlefont=dict(color='#ff6b00'),
+            title=dict(text='Trade Value (USD)', font=dict(color='#ff6b00')),
             tickfont=dict(color='#ff6b00'),
             overlaying='y',
             side='right'
